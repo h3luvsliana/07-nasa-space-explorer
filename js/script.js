@@ -1,31 +1,39 @@
-// Find our date picker inputs on the page
+// Inputs
 const startInput = document.getElementById('startDate');
 const endInput = document.getElementById('endDate');
-
-// Call the setupDateInputs function from dateRange.js
-// This sets up the date pickers to:
-// - Default to a range of 9 days (from 9 days ago to today)
-// - Restrict dates to NASA's image archive (starting from 1995)
 setupDateInputs(startInput, endInput);
 
 // NASA API key
 const apiKey = "bGPbGZ9eCjJoex4jc8rWWKRemA6Pwzz8sbRBntAJ";
 
 // Button + gallery
-const button = document.querySelector("button");
+const button = document.getElementById("fetch-btn");
 const gallery = document.getElementById("gallery");
 
-// When button is clicked
+// Modal elements
+const modal = document.getElementById("modal");
+const backBtn = document.getElementById("back-btn");
+
+// Click event
 button.addEventListener("click", fetchImages);
 
 function fetchImages() {
   const startDate = startInput.value;
   const endDate = endInput.value;
 
-  // Loading message (rubric requirement)
+  // Validate 9‑day range
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const diff = (end - start) / (1000 * 60 * 60 * 24);
+
+  if (diff !== 8) {
+    alert("Please select a date range of exactly 9 consecutive days.");
+    return;
+  }
+
   gallery.innerHTML = `<div class="placeholder"><p>Loading space images...</p></div>`;
 
-  fetch(`https://api.nasa.gov/planetary/apod?api_key=${apiKey}&start_date=${startDate}&end_date=${endDate}`)
+  fetch(`https://api.nasa.gov/planetary/apod?api_key=${apiKey}&start_date=${startDate}&end_date=${endDate}&thumbs=true`)
     .then(res => res.json())
     .then(data => {
       displayImages(data);
@@ -40,17 +48,20 @@ function displayImages(data) {
   gallery.innerHTML = "";
 
   data.slice(0, 9).forEach(item => {
+     console.log(item);
     const div = document.createElement("div");
     div.classList.add("gallery-item");
 
     let content;
 
-    // Handle images vs videos (bonus points)
+    // ⭐ Correct thumbnail logic
     if (item.media_type === "image") {
       content = `<img src="${item.url}" alt="${item.title}">`;
-    } else {
-      content = `<a href="${item.url}" target="_blank">Watch Video</a>`;
-    }
+} else {
+  const thumb = item.thumbnail_url || item.hdurl || item.url || "img/video-placeholder.png";
+  content = `<img src="${thumb}" alt="${item.title}">`;
+}
+
 
     div.innerHTML = `
       ${content}
@@ -58,15 +69,11 @@ function displayImages(data) {
       <p>${item.date}</p>
     `;
 
-    // Modal click
     div.addEventListener("click", () => openModal(item));
 
     gallery.appendChild(div);
   });
 }
-
-const modal = document.getElementById("modal");
-const closeBtn = document.getElementById("close");
 
 function openModal(item) {
   modal.classList.remove("hidden");
@@ -74,20 +81,41 @@ function openModal(item) {
   document.getElementById("modal-title").textContent = item.title;
   document.getElementById("modal-date").textContent = item.date;
   document.getElementById("modal-desc").textContent = item.explanation;
+
+  const modalImg = document.getElementById("modal-img");
+  const modalVideo = document.getElementById("modal-video");
+
   document.body.style.overflow = "hidden";
+
   if (item.media_type === "image") {
-    document.getElementById("modal-img").src = item.url;
-    document.getElementById("modal-img").style.display = "block";
+    modalImg.src = item.url;
+    modalImg.style.display = "block";
+
+    modalVideo.src = "";
+    modalVideo.style.display = "none";
+
   } else {
-    document.getElementById("modal-img").style.display = "none";
+    modalVideo.src = "";
+    modalVideo.style.display = "none";
+
+    const thumb = item.thumbnail_url || item.hdurl || item.url || "img/video-placeholder.png";
+
+    modalImg.src = thumb;
+    modalImg.style.display = "block";
+
+    const descEl = document.getElementById("modal-desc");
+    descEl.textContent = item.explanation + " ";
+
+    const link = document.createElement("a");
+    link.href = item.url;
+    link.target = "_blank";
+    link.textContent = "▶ Watch Video on NASA.gov";
+    link.style.color = "#FC3D21";
+    link.style.fontWeight = "bold";
+
+    descEl.appendChild(link);
   }
 }
-
-// Close modal
-closeBtn.addEventListener("click", () => {
-  modal.classList.add("hidden");
-});
-const backBtn = document.getElementById("back-btn");
 
 backBtn.addEventListener("click", closeModal);
 
@@ -95,3 +123,22 @@ function closeModal() {
   modal.classList.add("hidden");
   document.body.style.overflow = "auto";
 }
+
+const facts = [
+  "A day on Venus is longer than a year on Venus.",
+  "Neutron stars can spin 600 times per second.",
+  "Jupiter has the shortest day of all planets.",
+  "There are more stars in the universe than grains of sand on Earth.",
+  "The Sun makes up 99.8% of the mass in our solar system.",
+  "Mars has the largest volcano in the solar system: Olympus Mons.",
+  "Light from the Sun takes 8 minutes to reach Earth.",
+  "Saturn could float in water because it’s mostly gas.",
+  "A spoonful of a neutron star weighs about a billion tons."
+];
+
+function loadRandomFact() {
+  const fact = facts[Math.floor(Math.random() * facts.length)];
+  document.getElementById("space-fact").textContent = "🚀 Did you know? " + fact;
+}
+
+loadRandomFact();

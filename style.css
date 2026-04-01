@@ -7,8 +7,9 @@
 
 /* Base page styles */
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f1f1f1;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: #23262b; /* NASA blue */
+  color: white;
   padding: 20px;
 }
 
@@ -20,12 +21,22 @@ body {
 
 /* Header */
 .site-header {
+  background-color: #23262b; /* NASA blue */
+  padding: 20px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  margin-bottom: 20px;
+  gap: 15px;
+  border-bottom: 4px solid #FC3D21;
+}
+
+.site-header h1 {
+  color: #FFFFFF;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 2.2rem;
+  letter-spacing: 1px;
+  margin: 0;
 }
 
 h1 {
@@ -37,6 +48,7 @@ h1 {
 /* Logo */
 .logo {
   width: 140px;
+  filter: drop-shadow(0 0 4px rgba(0,0,0,0.3));
   margin-right: 15px;
 }
 
@@ -66,12 +78,14 @@ button {
 
 /* Button specific */
 button {
-  background-color: #d3d3d3;
-  color: black;
+  background-color: #FC3D21;
+  color: white;
+  border: none;
   cursor: pointer;
 }
+
 button:hover {
-  background-color: #bfbfbf;
+  background-color: #b72d19;
 }
 
 /* Stack horizontally on wider screens */
@@ -98,7 +112,7 @@ button:hover {
 
 /* Gallery items */
 .gallery-item {
-  flex: 1 1 100%;  /* full width by default */
+  flex: 1 1 100%;
   min-width: 280px;
   max-width: 500px;
   background: white;
@@ -117,17 +131,30 @@ button:hover {
   }
 }
 
+/* ⭐ FIXED: unified image rule */
 .gallery-item img {
   width: 100%;
   height: 200px;
   object-fit: cover;
   border-radius: 4px;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.gallery-item img:hover {
+  transform: scale(1.05);
 }
 
 .gallery-item p {
   margin-top: 10px;
   padding: 5px;
   font-size: 14px;
+  color: #000;
+}
+
+.gallery-item p strong {
+  color: #0B3D91;
+  font-weight: 700;
 }
 
 /* Placeholder content */
@@ -147,6 +174,7 @@ button:hover {
   display: none;
 }
 
+/* Modal */
 #modal {
   position: fixed;
   top: 0;
@@ -154,16 +182,22 @@ button:hover {
   width: 100%;
   height: 100%;
   background-color: rgba(0,0,0,0.8);
+  align-items: center;
 }
 
 #modal-content {
   background: white;
-  margin: 10% auto;
+  color: #0B3D91;
+  margin: 5% auto;
   padding: 20px;
   width: 80%;
   max-width: 600px;
   border-radius: 8px;
+  text-align: left;
+  max-height: 80vh;
+  overflow-y: auto;
 }
+
 #modal-img {
   width: 100%;
   max-height: 400px;
@@ -171,8 +205,27 @@ button:hover {
   margin: 15px 0;
 }
 
+#modal-desc {
+  margin-top: 15px;
+  line-height: 1.5;
+}
+
+#modal-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #0B3D91;
+}
+
+#modal-date {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 15px;
+  color: #FC3D21;
+}
+
 #back-btn {
-  background: #d32f2f; /* NASA red vibe */
+  background: #d32f2f;
   color: white;
   border: none;
   padding: 10px 15px;
@@ -183,4 +236,22 @@ button:hover {
 
 #back-btn:hover {
   background: #b71c1c;
+}
+
+/* Modal video */
+#modal-video {
+  width: 100%;
+  height: 350px;
+  border-radius: 6px;
+  margin: 15px 0;
+  display: none;
+  background: #000;
+}
+
+#space-fact {
+  text-align: center;
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: #FC3D21;
+  font-weight: 600;
 }
