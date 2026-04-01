@@ -44,24 +44,28 @@ function fetchImages() {
     });
 }
 
+// ⭐ NO SCRAPER — browser blocks it. We use a guaranteed fallback.
+const FALLBACK_VIDEO_THUMB = "https://apod.nasa.gov/apod/image/1901/IC405_Abolfath_3952.jpg";
+
+// ⭐ Display gallery
 function displayImages(data) {
   gallery.innerHTML = "";
 
   data.slice(0, 9).forEach(item => {
-     console.log(item);
+    console.log(item);
+
     const div = document.createElement("div");
     div.classList.add("gallery-item");
 
     let content;
 
-    // ⭐ Correct thumbnail logic
     if (item.media_type === "image") {
       content = `<img src="${item.url}" alt="${item.title}">`;
-} else {
-  const thumb = item.thumbnail_url || item.hdurl || item.url || "img/video-placeholder.png";
-  content = `<img src="${thumb}" alt="${item.title}">`;
-}
-
+    } else {
+      // ⭐ ALWAYS use fallback for videos (NASA gives no thumbnails in date ranges)
+      const thumb = item.thumbnail_url || item.hdurl || FALLBACK_VIDEO_THUMB;
+      content = `<img src="${thumb}" alt="${item.title}">`;
+    }
 
     div.innerHTML = `
       ${content}
@@ -75,7 +79,8 @@ function displayImages(data) {
   });
 }
 
-function openModal(item) {
+// ⭐ Modal
+async function openModal(item) {
   modal.classList.remove("hidden");
 
   document.getElementById("modal-title").textContent = item.title;
@@ -98,8 +103,8 @@ function openModal(item) {
     modalVideo.src = "";
     modalVideo.style.display = "none";
 
-    const thumb = item.thumbnail_url || item.hdurl || item.url || "img/video-placeholder.png";
-
+    // ⭐ Same fallback logic for modal
+    const thumb = item.thumbnail_url || item.hdurl || FALLBACK_VIDEO_THUMB;
     modalImg.src = thumb;
     modalImg.style.display = "block";
 
